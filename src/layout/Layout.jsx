@@ -15,16 +15,32 @@ import {
   Typography,
   Avatar,
   Grid,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
+import ArticleIcon from '@mui/icons-material/Article';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const drawerWidth = 240;
 
 const Layout = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const nombreEmpresa="Mi Empresa"
+  const nombreEmpresa = "Mi Empresa";
+
+  // Estado para el menú del avatar
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const menuOpen = Boolean(anchorEl);
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
@@ -43,12 +59,14 @@ const Layout = ({ children }) => {
       <Divider />
       <List className="mt-2">
         {[
-          { text: 'Inicio', icon: <HomeIcon /> },
-          { text: 'Acerca de', icon: <InfoIcon /> },
+          { text: 'Inicio', icon: <HomeIcon />, onclick:{} },
+          { text: 'Generar Boleta de Venta', icon: <ArticleIcon />, onclick:{} },
+          { text: 'Generar Factura', icon: <DescriptionIcon />, onclick:{} },
         ].map((item) => (
           <ListItem
             button
             key={item.text}
+            onClick={item.onclick}
             className="transition-all duration-300 hover:bg-gray-100"
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
@@ -64,8 +82,8 @@ const Layout = ({ children }) => {
       <CssBaseline />
 
       {/* AppBar */}
-      <AppBar position="fixed"  sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar className='justify-between' sx={{height:'30px'}}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Toolbar className="justify-between" sx={{ height: '30px' }}>
           {/* Botón hamburguesa */}
           <IconButton
             color="inherit"
@@ -76,19 +94,45 @@ const Layout = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h7" noWrap component="div">
+
+          <Typography variant="h7" noWrap component="div" fontWeight="bold">
             Sistema de Comprobantes de Pago
           </Typography>
-          <Grid className='flex gap-3 items-center'>
-            <Typography variant="h8" noWrap component="div">
-            {nombreEmpresa}
-          </Typography>
-          <Avatar {...stringAvatar(nombreEmpresa)} />
+
+          {/* Avatar y nombre de empresa */}
+          <Grid className="flex gap-3 items-center">
+            <IconButton onClick={handleAvatarClick}>
+              <Avatar {...stringAvatar(nombreEmpresa)} />
+            </IconButton>
           </Grid>
+
+          {/* Menú del avatar */}
+          <Menu
+            anchorEl={anchorEl}
+            open={menuOpen}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <Grid>
+              <Typography variant="h8" noWrap component="div" justifySelf={'center'}>
+                {nombreEmpresa}
+              </Typography>
+              <Divider/>
+            </Grid>
+            <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Cerrar sesión</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
-      {/* Drawer temporal para todas las pantallas */}
+      {/* Drawer lateral */}
       <Drawer
         variant="temporary"
         open={drawerOpen}
@@ -110,7 +154,7 @@ const Layout = ({ children }) => {
         sx={{
           flexGrow: 1,
           p: 3,
-          mt: 8, // espacio para AppBar
+          mt: 8, // espacio para el AppBar
         }}
       >
         {children}
@@ -120,6 +164,8 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
+
+// ---------------------- Helpers ----------------------
 
 function stringToColor(string) {
   let hash = 0;
@@ -142,13 +188,17 @@ function stringToColor(string) {
 }
 
 function stringAvatar(name) {
-  const nameParts = name.trim().split(' ');
+  if (typeof name !== 'string' || !name.trim()) {
+    return {
+      sx: { bgcolor: '#ccc' },
+      children: '?',
+    };
+  }
 
-  let initials = '';
-  if (nameParts.length === 1) {
-    initials = nameParts[0][0];
-  } else if (nameParts.length >= 2) {
-    initials = `${nameParts[0][0]}${nameParts[1][0]}`;
+  const nameParts = name.trim().split(' ');
+  let initials = nameParts[0][0];
+  if (nameParts.length > 1) {
+    initials += nameParts[1][0];
   }
 
   return {
