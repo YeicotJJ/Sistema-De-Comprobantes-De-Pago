@@ -18,15 +18,19 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import InfoIcon from '@mui/icons-material/Info';
 import ArticleIcon from '@mui/icons-material/Article';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ConstructionIcon from '@mui/icons-material/Construction';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const drawerWidth = 240;
 
 const Layout = ({ children }) => {
+  const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const nombreEmpresa = "Mi Empresa";
 
@@ -59,15 +63,33 @@ const Layout = ({ children }) => {
       <Divider />
       <List className="mt-2">
         {[
-          { text: 'Inicio', icon: <HomeIcon />, onclick:{} },
-          { text: 'Generar Boleta de Venta', icon: <ArticleIcon />, onclick:{} },
-          { text: 'Generar Factura', icon: <DescriptionIcon />, onclick:{} },
+          {
+            text: 'Inicio',
+            icon: <HomeIcon />,
+            onclick: () => {
+              navigate('/');
+            }
+          },
+          { 
+            text: 'Generar Boleta de Venta',
+            icon: <ArticleIcon />,
+            onclick: () => {
+              navigate('/boletas');
+            }
+            },
+          { 
+            text: 'Generar Factura',
+            icon: <DescriptionIcon />,
+            onclick: () => {
+              navigate('/facturas');
+            }
+          },
         ].map((item) => (
           <ListItem
             button
             key={item.text}
             onClick={item.onclick}
-            className="transition-all duration-300 hover:bg-gray-100"
+            className="transition-all duration-300 hover:bg-gray-100 hover:cursor-pointer px-6"
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
@@ -126,8 +148,8 @@ const Layout = ({ children }) => {
               </Typography>
               <Divider/>
             </Grid>
-            <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Cerrar sesión</MenuItem>
+            <MenuItem onClick={navigate('/configuration')} className='gap-2'> <ConstructionIcon/> Preferencias </MenuItem>
+            <MenuItem onClick={handleMenuClose} className='gap-2' > <ExitToAppIcon/> Cerrar sesión </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>

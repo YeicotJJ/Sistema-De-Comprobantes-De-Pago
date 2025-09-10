@@ -1,13 +1,10 @@
 import React from 'react'
-import Layout from '@/layout/Layout.jsx'
 
 function GenerateBoletas() {
   return (
-    <Layout>
     <div>
-      Prueba de Función
+      Prueba de Boletas
     </div>
-    </Layout>
   )
 }
 

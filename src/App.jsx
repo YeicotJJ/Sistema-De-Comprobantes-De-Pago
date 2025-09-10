@@ -1,13 +1,13 @@
 import './App.css'
-import GenerateBoletas from '@/pages/GenerateBoletas'
+import { BrowserRouter } from 'react-router-dom';
+import RoutesAdmin from '@/routes/RoutesAdmin';
 
 function App() {
-
   return (
-    <>
-      <GenerateBoletas/>
-    </>
-  )
+    <BrowserRouter>
+      <RoutesAdmin />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
