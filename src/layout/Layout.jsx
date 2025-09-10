@@ -129,19 +129,6 @@ const Layout = ({ children }) => {
 
           {/* Avatar y nombre de empresa */}
           <Grid className="flex gap-3 items-center">
-            <Grid className="flex gap-3 items-center">
-              <Tooltip title={mode === 'dark' ? 'Modo Oscuro' : 'Modo Claro'}>
-                <Switch
-                  checked={mode === 'dark'}
-                  onChange={toggleTheme}
-                  color="default"
-                  icon={<LightModeIcon fontSize="small" />}
-                  checkedIcon={<DarkModeIcon fontSize="small" sx={{color:'white'}}/>}
-                  inputProps={{ 'aria-label': 'toggle theme mode' }}
-                />
-              </Tooltip>
-            
-            </Grid>
             <IconButton onClick={handleAvatarClick}>
               <Avatar {...stringAvatar(nombreEmpresa, mode)} />
             </IconButton>
@@ -167,8 +154,22 @@ const Layout = ({ children }) => {
               </Typography>
               <Divider/>
             </Grid>
-            <MenuItem onClick={() => navigate('/configuration')} className='gap-2'> <ConstructionIcon/> Preferencias </MenuItem>
-            <MenuItem onClick={handleMenuClose} className='gap-2' > <ExitToAppIcon/> Cerrar sesión </MenuItem>
+            <Grid className="flex gap-2 items-center justify-center ml-[12px]">
+              <Typography>{mode === 'dark' ? 'Modo Oscuro' : 'Modo Claro'} </Typography>
+              <Tooltip title={mode === 'dark' ? 'Modo Oscuro' : 'Modo Claro'}>
+                <Switch
+                  checked={mode === 'dark'}
+                  onChange={toggleTheme}
+                  color="default"
+                  icon={<LightModeIcon fontSize="small" />}
+                  checkedIcon={<DarkModeIcon fontSize="small" sx={{color:'white'}}/>}
+                  inputProps={{ 'aria-label': 'toggle theme mode' }}
+                />
+              </Tooltip>
+            
+            </Grid>
+            <MenuItem onClick={() => navigate('/configuration')} className='gap-3'> <ConstructionIcon/> Preferencias </MenuItem>
+            <MenuItem onClick={handleMenuClose} className='gap-3' > <ExitToAppIcon/> Cerrar sesión </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
