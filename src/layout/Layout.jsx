@@ -27,10 +27,16 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
+import { useAppTheme } from '@/theme/ThemeProvider';
+import { Switch, Tooltip } from '@mui/material';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+
 const drawerWidth = 240;
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
+  const { mode, toggleTheme } = useAppTheme();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const nombreEmpresa = "Mi Empresa";
 
@@ -123,8 +129,21 @@ const Layout = ({ children }) => {
 
           {/* Avatar y nombre de empresa */}
           <Grid className="flex gap-3 items-center">
+            <Grid className="flex gap-3 items-center">
+              <Tooltip title={mode === 'dark' ? 'Modo Oscuro' : 'Modo Claro'}>
+                <Switch
+                  checked={mode === 'dark'}
+                  onChange={toggleTheme}
+                  color="default"
+                  icon={<LightModeIcon fontSize="small" />}
+                  checkedIcon={<DarkModeIcon fontSize="small" sx={{color:'white'}}/>}
+                  inputProps={{ 'aria-label': 'toggle theme mode' }}
+                />
+              </Tooltip>
+            
+            </Grid>
             <IconButton onClick={handleAvatarClick}>
-              <Avatar {...stringAvatar(nombreEmpresa)} />
+              <Avatar {...stringAvatar(nombreEmpresa, mode)} />
             </IconButton>
           </Grid>
 
@@ -148,7 +167,7 @@ const Layout = ({ children }) => {
               </Typography>
               <Divider/>
             </Grid>
-            <MenuItem onClick={navigate('/configuration')} className='gap-2'> <ConstructionIcon/> Preferencias </MenuItem>
+            <MenuItem onClick={() => navigate('/configuration')} className='gap-2'> <ConstructionIcon/> Preferencias </MenuItem>
             <MenuItem onClick={handleMenuClose} className='gap-2' > <ExitToAppIcon/> Cerrar sesión </MenuItem>
           </Menu>
         </Toolbar>
@@ -189,27 +208,32 @@ export default Layout;
 
 // ---------------------- Helpers ----------------------
 
-function stringToColor(string) {
+function stringToColor(string, mode = 'light') {
   let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
+  for (let i = 0; i < string.length; i++) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
 
   let color = '#';
 
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
+  for (let i = 0; i < 3; i++) {
+    let value = (hash >> (i * 8)) & 0xff;
+
+    if (mode === 'dark') {
+      // Aquí colores claros para tema oscuro
+      value = Math.floor((value / 255) * 55) + 200;
+    } else {
+      // Aquí colores oscuros para tema claro
+      value = Math.floor((value / 255) * 70) + 50;
+    }
+
+    color += value.toString(16).padStart(2, '0');
   }
-  /* eslint-enable no-bitwise */
 
   return color;
 }
 
-function stringAvatar(name) {
+function stringAvatar(name, mode = 'light') {
   if (typeof name !== 'string' || !name.trim()) {
     return {
       sx: { bgcolor: '#ccc' },
@@ -225,7 +249,7 @@ function stringAvatar(name) {
 
   return {
     sx: {
-      bgcolor: stringToColor(name),
+      bgcolor: stringToColor(name, mode),
     },
     children: initials.toUpperCase(),
   };
