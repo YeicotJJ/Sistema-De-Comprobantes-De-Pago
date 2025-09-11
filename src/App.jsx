@@ -2,13 +2,17 @@
 import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import RoutesAdmin from '@/routes/RoutesAdmin';
-import AppThemeProvider from '@/theme/ThemeProvider'; // Ajusta según tu estructura
+import AppThemeProvider from '@/theme/ThemeProvider';
+import { store } from '@/store/store'
+import { Provider } from 'react-redux'
 
 function App() {
   return (
     <AppThemeProvider>
       <BrowserRouter>
-        <RoutesAdmin />
+        <Provider store={store}>
+          <RoutesAdmin />
+        </Provider>
       </BrowserRouter>
     </AppThemeProvider>
   );

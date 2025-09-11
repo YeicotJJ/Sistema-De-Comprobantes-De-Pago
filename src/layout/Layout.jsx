@@ -106,7 +106,7 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Grid container sx={{ display: 'flex' }}>
       <CssBaseline />
 
       {/* AppBar */}
@@ -191,17 +191,18 @@ const Layout = ({ children }) => {
       </Drawer>
 
       {/* Contenido principal */}
-      <Box
+      <Grid
         component="main"
+        container
         sx={{
           flexGrow: 1,
-          p: 3,
-          mt: 8, // espacio para el AppBar
+          p: 0,
+          mt: 10, // espacio para el AppBar
         }}
       >
         {children}
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   );
 };
 
