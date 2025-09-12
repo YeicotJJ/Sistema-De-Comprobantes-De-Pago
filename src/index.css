@@ -35,3 +35,10 @@
 body {
     background-color: var(--color-background) !important;
 }
+
+
+/* styles.css o dentro de un archivo de configuración de Tailwind */
+
+.text-responsive {
+    font-size: clamp(11px, 2vw, 16px)!important;
+}

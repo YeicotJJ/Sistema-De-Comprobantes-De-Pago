@@ -4,13 +4,13 @@ import {
   TextField, IconButton, Button,
   Box,
   Fab, Stack, Select, MenuItem,
+  Typography,
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon, CleaningServices as CleanIcon } from '@mui/icons-material';
 
 function TablaProductos() {
 
   const productoVacio = {
-    sku: '',
     nombre: 'Bien',
     unidad: 'Unidad',
     cantidad: '1',
@@ -96,6 +96,11 @@ function TablaProductos() {
   const handleClearAll = () => {
     setProductos([{ ...productoVacio }]);
   };
+  
+  // Calcular los totales
+  const totalImporteVenta = productos.reduce((acc, producto) => acc + (parseFloat(producto.importeVenta) || 0), 0);
+  const totalIGV = productos.reduce((acc, producto) => acc + (parseFloat(producto.igv) || 0), 0);
+  const operacionGravada = totalImporteVenta * 0.82;
 
   return (
     <div className="p-4 bg-background text-on-background min-h-screen">
@@ -135,7 +140,7 @@ function TablaProductos() {
             }}
             onClick={handleAddRow}
           >
-            Añadir Producto
+            Añadir Por Producto
           </Button>
         </Stack>
       </div>
@@ -155,10 +160,10 @@ function TablaProductos() {
           <TableHead className="bg-surface">
             <TableRow>
               {[
-                'SKU', 'Bien / Servicio', 'Unidad Medida', 'Cantidad',
+                'Bien / Servicio', 'Unidad Medida', 'Cantidad',
                 'Descripción', 'Valor Unitario', 'IGV', 'Importe de Venta', 'Acciones'
               ].map((header) => (
-                <TableCell key={header} className="text-on-surface font-bold">
+                <TableCell key={header} className="text-on-surface font-bold text-responsive">
                   {header}
                 </TableCell>
               ))}
@@ -167,21 +172,14 @@ function TablaProductos() {
 
           <TableBody>
             {productos.map((producto, index) => (
-              <TableRow key={index} className="bg-surface">
-                <TableCell>
-                  <TextField
-                    variant="standard"
-                    value={producto.sku}
-                    onChange={(e) => handleChange(index, 'sku', e.target.value)}
-                    InputProps={{ className: 'text-on-surface' }}
-                  />
-                </TableCell>
-                <TableCell>
+              <TableRow key={index} className="bg-surface text-responsive">
+                <TableCell className=' text-responsive'>
                     <Select
                       variant="standard"
                       value={producto.nombre}
                       onChange={(e) => handleChange(index, 'nombre', e.target.value)}
                       displayEmpty
+                      className='text-responsive'
                       inputProps={{ className: 'text-on-surface' }}
                       fullWidth
                     >
@@ -195,6 +193,7 @@ function TablaProductos() {
                       value={producto.unidad}
                       onChange={(e) => handleChange(index, 'unidad', e.target.value)}
                       displayEmpty
+                      className='text-responsive'
                       inputProps={{ className: 'text-on-surface' }}
                       fullWidth
                     >
@@ -209,6 +208,7 @@ function TablaProductos() {
                   <TextField
                     variant="standard"
                     type="number"
+                    className='text-responsive'
                     value={producto.cantidad}
                     inputProps={{ min: 1 }}
                     onChange={(e) => {
@@ -223,6 +223,7 @@ function TablaProductos() {
                 <TableCell>
                   <TextField
                     variant="standard"
+                    className='text-responsive'
                     value={producto.descripcion}
                     onChange={(e) => handleChange(index, 'descripcion', e.target.value)}
                     InputProps={{ className: 'text-on-surface' }}
@@ -231,15 +232,21 @@ function TablaProductos() {
                 <TableCell>
                   <TextField
                     variant="standard"
+                    className='text-responsive'
                     type="number"
                     value={producto.valorUnitario}
-                    onChange={(e) => handleChange(index, 'valorUnitario', e.target.value)}
+                    onChange={(e) => 
+                        {
+                        let val = e.target.value;
+                        if (parseInt(val) < 0.000001) val = '0.000001'; // no menos que 1
+                        handleChange(index, 'valorUnitario', val)}}
                     InputProps={{ className: 'text-on-surface' }}
                   />
                 </TableCell>
                 <TableCell>
                   <TextField
                     variant="standard"
+                    type="number"
                     value={producto.igv}
                     InputProps={{
                       readOnly: true,
@@ -250,8 +257,13 @@ function TablaProductos() {
                 <TableCell>
                   <TextField
                     variant="standard"
+                    type="number"
                     value={producto.importeVenta}
-                    onChange={(e) => handleChange(index, 'importeVenta', e.target.value)}
+                    onChange={(e) => 
+                        {
+                        let val = e.target.value;
+                        if (parseInt(val) < 0.000001) val = '0.000001'; // no menos que 1
+                        handleChange(index, 'importeVenta', val)}}
                     InputProps={{
                       className: 'text-on-surface',
                     }}
@@ -264,6 +276,22 @@ function TablaProductos() {
                 </TableCell>
               </TableRow>
             ))}
+            {/* Filas con los totales calculados */}
+      <TableRow>
+        <TableCell colSpan={6}></TableCell>
+        <TableCell style={{ textAlign: 'right', fontWeight: 'bold' }}>Operación Gravada</TableCell>
+        <TableCell style={{ textAlign: 'right' }}>{operacionGravada.toFixed(2)}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell colSpan={6}></TableCell>
+        <TableCell style={{ textAlign: 'right', fontWeight: 'bold' }}>IGV</TableCell>
+        <TableCell style={{ textAlign: 'right' }}>{totalIGV.toFixed(2)}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell colSpan={6}></TableCell>
+        <TableCell style={{ textAlign: 'right', fontWeight: 'bold' }}>Importe Total</TableCell>
+        <TableCell style={{ textAlign: 'right' }}>{totalImporteVenta.toFixed(2)}</TableCell>
+      </TableRow>
           </TableBody>
         </Table>
 
