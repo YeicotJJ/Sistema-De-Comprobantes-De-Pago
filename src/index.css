@@ -5,13 +5,13 @@
 /* Tema claro (por defecto) */
 
 :root {
-    --color-background: rgb(233, 233, 233);
+    --color-background: rgb(252, 252, 252);
     --color-surface: rgb(255, 255, 255);
     --color-primary: rgb(70, 124, 240);
     --color-secondary: rgb(0, 0, 0);
     --color-on-background: rgb(70, 70, 70);
     --color-on-surface: rgb(0, 0, 0);
-    --color-on-primary: rgb(0, 0, 0);
+    --color-on-primary: rgb(255, 255, 255);
     --color-on-secondary: rgb(255, 255, 255);
 }
 
@@ -27,4 +27,11 @@
     --color-on-surface: rgb(255, 255, 255);
     --color-on-primary: rgb(255, 255, 255);
     --color-on-secondary: rgb(0, 0, 0);
+}
+
+
+/*Options*/
+
+body {
+    background-color: var(--color-background) !important;
 }

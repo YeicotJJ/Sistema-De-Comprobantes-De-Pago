@@ -8,7 +8,19 @@ function PreviewComprobante() {
   const text_max='18px' //px
 
   return (
-    <Grid container sx={{width:'100%', minHeight:'30vh', backgroundColor:'var(--color-surface)', color:'var(--color-on-surface)', boxSizing:'border-box', padding:'2em', borderRadius:'10px', boxShadow:'inset 0 3px 8px rgba(0, 0, 0, 0.2)'}}>
+    <Grid container 
+    sx={{
+      width:'100%', 
+      minHeight:'50vh', 
+      backgroundColor:'var(--color-surface)', 
+      color:'var(--color-on-surface)', 
+      boxSizing:'border-box', 
+      padding:'2em', 
+      borderRadius: '8px',
+      borderWidth:'4px',
+      borderStyle:'outset',
+      borderColor:'var(--color-primary)',
+    }}>
       <Typography fontSize={`clamp(${text_min}, ${text_med}, ${text_max})`}>Hola</Typography>
     </Grid>
   );

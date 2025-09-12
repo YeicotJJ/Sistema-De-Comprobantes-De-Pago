@@ -27,7 +27,9 @@ function SecondLine() {
         boxSizing: 'border-box',
         padding: '1em',
         borderRadius: '10px',
-        boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.2)',
+        borderWidth:'4px',
+        borderStyle:'outset',
+        borderColor:'var(--color-primary)',
       }}
     >
         <Typography fontSize={`clamp(${text_min}, ${text_med}, ${text_max})`} textAlign={'start'} fontWeight={'bold'}>

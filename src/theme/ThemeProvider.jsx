@@ -10,15 +10,15 @@ const getDesignTokens = (mode) => ({
   palette: {
     mode,
     primary: {
-      main: 'rgb(70, 124, 240)', // puedes reemplazar por var(--color-primary) si prefieres
+      main: 'rgb(70, 124, 240)',
     },
     background: {
-      default: 'var(--color-background)',
-      paper: 'var(--color-surface)',
+      default: mode === 'light' ? '#ffffff' : '#121212',
+      paper: mode === 'light' ? '#f5f5f5' : '#1e1e1e',
     },
     text: {
-      primary: 'var(--color-on-background)',
-      secondary: 'var(--color-on-surface)',
+      primary: mode === 'light' ? '#000000' : '#ffffff',
+      secondary: mode === 'light' ? '#5f6368' : '#cccccc',
     },
   },
 });
