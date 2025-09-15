@@ -22,10 +22,11 @@ import { useNavigate } from 'react-router-dom';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import ArticleIcon from '@mui/icons-material/Article';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import InboxIcon from '@mui/icons-material/Inbox';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 
 import { useAppTheme } from '@/theme/ThemeProvider';
 import { Switch, Tooltip } from '@mui/material';
@@ -78,16 +79,23 @@ const Layout = ({ children }) => {
           },
           { 
             text: 'Generar Boleta de Venta',
-            icon: <ArticleIcon />,
+            icon: <DescriptionIcon />,
             onclick: () => {
               navigate('/boletas');
             }
             },
           { 
             text: 'Generar Factura',
-            icon: <DescriptionIcon />,
+            icon: <ApartmentIcon />,
             onclick: () => {
               navigate('/facturas');
+            }
+          },
+          { 
+            text: 'Lista de Bienes / Servicios',
+            icon: <InboxIcon />,
+            onclick: () => {
+              navigate('/bienes');
             }
           },
         ].map((item) => (

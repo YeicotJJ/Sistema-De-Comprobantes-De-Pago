@@ -5,6 +5,7 @@ import BoletasRoutes from '@/pages/boletas/BoletasRoutes';
 import FacturasRoutes from '@/pages/facturas/FacturasRoutes';
 import Layout from '@/layout/Layout';
 import ConfigurationRoutes from '../pages/configuration/ConfigurationRoutes';
+import BienesRoutes from '../pages/bienes/BienesRoutes';
 
 export default function RoutesAdmin() {
   return (
@@ -12,6 +13,7 @@ export default function RoutesAdmin() {
       <Route path="/*" element={<Layout><HomeRoutes /></Layout>} />
       <Route path="/boletas/*" element={<Layout><BoletasRoutes /></Layout>} />
       <Route path="/facturas/*" element={<Layout><FacturasRoutes /></Layout>} />
+      <Route path="/bienes/*" element={<Layout><BienesRoutes /></Layout>} />
       <Route path="/configuration/*" element={<Layout><ConfigurationRoutes /></Layout>} />
     </Routes>
   );

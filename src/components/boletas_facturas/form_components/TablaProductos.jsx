@@ -161,7 +161,7 @@ function TablaProductos() {
             <TableRow>
               {[
                 'Bien / Servicio', 'Unidad Medida', 'Cantidad',
-                'Descripción', 'Valor Unitario', 'IGV', 'Importe de Venta', 'Acciones'
+                'Descripción', 'Valor Unitario (IGV)', 'IGV', 'Importe de Venta', 'Acciones'
               ].map((header) => (
                 <TableCell key={header} className="text-on-surface font-bold text-responsive">
                   {header}
