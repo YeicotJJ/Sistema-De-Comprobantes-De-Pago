@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Table, TableHead, TableBody, TableRow, TableCell,
-  TextField, IconButton, Button, Box, Fab, Select, MenuItem,
+  TextField, IconButton, Button, Box, Select, MenuItem,
   Modal, Typography,
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
@@ -27,9 +27,10 @@ function TablaProductos() {
   const [openModal, setOpenModal] = useState(false);
   const [nuevoProducto, setNuevoProducto] = useState({ ...productoVacio });
 
-  const productosRef = collection(db, 'productos');
+  // ✅ Referencia a la subcolección correcta
+  const productosRef = collection(db, 'empresa', 'productos', 'productos');
 
-  // 🧠 Calcular valores
+  // Calcular IGV e importe de venta
   const calcularValores = (producto) => {
     const cantidad = parseInt(producto.cantidad) || 1;
     const valorUnitario = parseFloat(producto.valorUnitario) || 0;
@@ -44,7 +45,7 @@ function TablaProductos() {
     };
   };
 
-  // 📥 Leer productos de Firestore
+  // Obtener productos desde Firestore
   const fetchProductos = async () => {
     try {
       const snapshot = await getDocs(productosRef);
@@ -55,31 +56,28 @@ function TablaProductos() {
     }
   };
 
-  // 🗑️ Eliminar producto
+  // Eliminar producto
   const handleDeleteRow = async (id) => {
     try {
-      await deleteDoc(doc(db, 'productos', id));
+      await deleteDoc(doc(db, 'empresa', 'productos', 'productos', id));
       fetchProductos();
     } catch (err) {
       console.error('Error al eliminar:', err);
     }
   };
 
-  // 💾 Añadir producto a Firestore
- const handleGuardarProducto = async () => {
-  console.log('firebase prueba', import.meta.env.VITE_apiKey);
-  console.log("Guardando producto...", nuevoProducto); // ✅ VERIFICA
-  const calculado = calcularValores(nuevoProducto);
-  try {
-    await addDoc(productosRef, calculado);
-    setOpenModal(false);
-    setNuevoProducto({ ...productoVacio });
-    fetchProductos();
-  } catch (err) {
-    console.error('Error al guardar:', err);
-  }
-};
-
+  // Guardar producto nuevo
+  const handleGuardarProducto = async () => {
+    const calculado = calcularValores(nuevoProducto);
+    try {
+      await addDoc(productosRef, calculado);
+      setOpenModal(false);
+      setNuevoProducto({ ...productoVacio });
+      fetchProductos();
+    } catch (err) {
+      console.error('Error al guardar:', err);
+    }
+  };
 
   useEffect(() => {
     fetchProductos();
@@ -135,7 +133,7 @@ function TablaProductos() {
         <Typography><strong>Total Venta:</strong> S/ {totalImporteVenta.toFixed(2)}</Typography>
       </Box>
 
-      {/* Modal de nuevo producto */}
+      {/* Modal nuevo producto */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box
           sx={{
