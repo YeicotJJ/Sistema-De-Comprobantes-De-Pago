@@ -1,49 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import {
   Table, TableHead, TableBody, TableRow, TableCell,
-  TextField, IconButton, Button, Box, Select, MenuItem,
-  Modal, Typography,
+   IconButton, Button, Box,Typography,Switch,Grid,Tooltip,
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/db/firebase'; // Ajusta la ruta si es necesario
-
-const unidadesDeMedida = [
-  'Unidad', 'Kilogramo', 'Litro', 'Metro', 'Caja', 'Paquete', 'Docena', 'Servicio', 'Otro',
-];
-
-const productoVacio = {
-  nombre: 'Bien',
-  unidad: 'Unidad',
-  cantidad: '1',
-  descripcion: '',
-  valorUnitario: '',
-  igv: '',
-  importeVenta: '',
-};
+import ModalProducto from './ModalProductos';
+import ListMode from './ListMode';
 
 function TablaProductos() {
   const [productos, setProductos] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  const [nuevoProducto, setNuevoProducto] = useState({ ...productoVacio });
 
-  // ✅ Referencia a la subcolección correcta
-  const productosRef = collection(db, 'empresa', 'productos', 'productos');
+  //Acomodar si es móvil y cambios de pantalla
+  const [esMovil, setEsMovil] = useState(window.innerWidth <= 768);
 
-  // Calcular IGV e importe de venta
-  const calcularValores = (producto) => {
-    const cantidad = parseInt(producto.cantidad) || 1;
-    const valorUnitario = parseFloat(producto.valorUnitario) || 0;
-    const igv = +(valorUnitario * 0.18 * cantidad).toFixed(2);
-    const importeVenta = +(valorUnitario * cantidad).toFixed(2);
-
-    return {
-      ...producto,
-      cantidad: cantidad.toString(),
-      igv: igv.toString(),
-      importeVenta: importeVenta.toString(),
+  useEffect(() => {
+    // Función que actualiza el estado según el tamaño de la ventana
+    const handleResize = () => {
+      setEsMovil(window.innerWidth <= 768);
     };
-  };
+
+    // Añadir el listener para el evento de resize
+    window.addEventListener('resize', handleResize);
+    // Limpiar el listener cuando el componente se desmonte
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Solo se ejecuta una vez, al montar el componente
+
+  // Referencia a la subcolección correcta
+  const productosRef = collection(db, 'empresa', 'productos', 'productos');
 
   // Obtener productos desde Firestore
   const fetchProductos = async () => {
@@ -66,144 +54,77 @@ function TablaProductos() {
     }
   };
 
-  // Guardar producto nuevo
-  const handleGuardarProducto = async () => {
-    const calculado = calcularValores(nuevoProducto);
-    try {
-      await addDoc(productosRef, calculado);
-      setOpenModal(false);
-      setNuevoProducto({ ...productoVacio });
-      fetchProductos();
-    } catch (err) {
-      console.error('Error al guardar:', err);
-    }
-  };
-
   useEffect(() => {
     fetchProductos();
   }, []);
 
-  const totalImporteVenta = productos.reduce((acc, p) => acc + (parseFloat(p.importeVenta) || 0), 0);
-  const totalIGV = productos.reduce((acc, p) => acc + (parseFloat(p.igv) || 0), 0);
+  //Font Size
+  const text_min='16px' //px
+  const text_med= '5vw' //vw
+  const text_max='23px' //px
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <Typography variant="h6">Lista de Bienes / Servicios</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setOpenModal(true)}
-        >
-          Añadir Producto
-        </Button>
-      </div>
+    <Grid container width={'80vw'}>
+      <Grid container direction={esMovil?'column':'row'} justifyContent={esMovil?'center':'space-between'} alignItems={'center'} sx={{mb:4, mt:3}} width={'100%'} padding={{xs:2,sm:0,md:2}}>
+        <Typography fontSize={`clamp(${text_min}, ${text_med}, ${text_max})`} fontWeight={'bold'}>Lista de Bienes / Servicios</Typography>
+        <Grid container size={5}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon sx={{fontSize:`clamp(10px, 1vw, 18px)`}}/>}
+            onClick={() => setOpenModal(true)}
+            sx={{ 
+              width: '100%',
+              fontSize:`clamp(10px, 1vw, 18px)`,
+            }}
+          >
+            {esMovil?'Producto' : 'Añadir Producto'}
+          </Button>
+        </Grid>
+        
+      </Grid>
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            {['Tipo', 'Unidad', 'Cantidad', 'Descripción', 'Valor Unitario', 'IGV', 'Importe Venta', 'Acciones'].map((text) => (
-              <TableCell key={text}>{text}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {productos.map((producto, index) => (
-            <TableRow key={index}>
-              <TableCell>{producto.nombre}</TableCell>
-              <TableCell>{producto.unidad}</TableCell>
-              <TableCell>{producto.cantidad}</TableCell>
-              <TableCell>{producto.descripcion}</TableCell>
-              <TableCell>{producto.valorUnitario}</TableCell>
-              <TableCell>{producto.igv}</TableCell>
-              <TableCell>{producto.importeVenta}</TableCell>
-              <TableCell>
-                <IconButton onClick={() => handleDeleteRow(producto.id)} color="error">
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
+    <Grid container width={'100%'}>
+      {!esMovil && (
+        <Table sx={{width:'100%'}}>
+          <TableHead>
+            <TableRow>
+              {['Tipo', 'Unidad', 'Cantidad', 'Descripción', 'Valor Unitario', 'IGV', 'Importe Venta', 'Acciones'].map((text) => (
+                <TableCell key={text}>{text}</TableCell>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
-      {/* Totales */}
-      <Box mt={3}>
-        <Typography><strong>Total IGV:</strong> S/ {totalIGV.toFixed(2)}</Typography>
-        <Typography><strong>Total Venta:</strong> S/ {totalImporteVenta.toFixed(2)}</Typography>
-      </Box>
+          </TableHead>
+          <TableBody>
+            {productos.map((producto, index) => (
+              <TableRow key={index}>
+                <TableCell>{producto.nombre}</TableCell>
+                <TableCell>{producto.unidad}</TableCell>
+                <TableCell>{producto.cantidad}</TableCell>
+                <TableCell>{producto.descripcion}</TableCell>
+                <TableCell>{producto.valorUnitario}</TableCell>
+                <TableCell>{producto.igv}</TableCell>
+                <TableCell>{producto.importeVenta}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleDeleteRow(producto.id)} color="error">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+      
+      {esMovil && (
+        <ListMode productos={productos}/>
+      )}
+    </Grid>
 
       {/* Modal nuevo producto */}
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            borderRadius: 2,
-            boxShadow: 24,
-            p: 4,
-            width: '90%',
-            maxWidth: 500,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>Nuevo Producto</Typography>
-
-          <Select
-            fullWidth
-            value={nuevoProducto.nombre}
-            onChange={(e) => setNuevoProducto({ ...nuevoProducto, nombre: e.target.value })}
-            sx={{ mb: 2 }}
-          >
-            <MenuItem value="Bien">Bien</MenuItem>
-            <MenuItem value="Servicio">Servicio</MenuItem>
-          </Select>
-
-          <Select
-            fullWidth
-            value={nuevoProducto.unidad}
-            onChange={(e) => setNuevoProducto({ ...nuevoProducto, unidad: e.target.value })}
-            sx={{ mb: 2 }}
-          >
-            {unidadesDeMedida.map((unidad) => (
-              <MenuItem key={unidad} value={unidad}>{unidad}</MenuItem>
-            ))}
-          </Select>
-
-          <TextField
-            fullWidth
-            label="Cantidad"
-            type="number"
-            value={nuevoProducto.cantidad}
-            onChange={(e) => setNuevoProducto({ ...nuevoProducto, cantidad: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-
-          <TextField
-            fullWidth
-            label="Descripción"
-            value={nuevoProducto.descripcion}
-            onChange={(e) => setNuevoProducto({ ...nuevoProducto, descripcion: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-
-          <TextField
-            fullWidth
-            label="Valor Unitario (sin IGV)"
-            type="number"
-            value={nuevoProducto.valorUnitario}
-            onChange={(e) => setNuevoProducto({ ...nuevoProducto, valorUnitario: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-
-          <Box display="flex" justifyContent="flex-end" gap={2}>
-            <Button onClick={() => setOpenModal(false)}>Cancelar</Button>
-            <Button variant="contained" onClick={handleGuardarProducto}>Guardar</Button>
-          </Box>
-        </Box>
-      </Modal>
-    </div>
+      <ModalProducto
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      />
+    </Grid>
   );
 }
 
