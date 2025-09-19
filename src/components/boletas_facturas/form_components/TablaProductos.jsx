@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Table, TableHead, TableBody, TableRow, TableCell,
-  TextField, IconButton, Button,
-  Box,
-  Fab, Stack, Select, MenuItem,
-  Typography,
+  Table, TableHead, TableBody, TableRow, TableCell,TextField, IconButton, Button,Box,Fab, Stack, Select, MenuItem,Typography, Grid,
+  Tooltip
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon, CleaningServices as CleanIcon } from '@mui/icons-material';
 
@@ -32,6 +29,28 @@ function TablaProductos() {
   'Otro',
 ];
 
+  //Font Size
+const text_min = '1rem';      // 16px
+const text_med = '2vw';       // preferido
+const text_max = '1.4375rem'; // 23px
+
+//Acomodar si es móvil y cambios de pantalla
+  const [esMovil, setEsMovil] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    // Función que actualiza el estado según el tamaño de la ventana
+    const handleResize = () => {
+      setEsMovil(window.innerWidth <= 768);
+    };
+
+    // Añadir el listener para el evento de resize
+    window.addEventListener('resize', handleResize);
+    // Limpiar el listener cuando el componente se desmonte
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Solo se ejecuta una vez, al montar el componente
+  
   const [productos, setProductos] = useState([productoVacio]);
 
   const handleChange = (index, field, value) => {
@@ -104,8 +123,8 @@ function TablaProductos() {
 
   return (
     <div className="p-4 bg-background text-on-background min-h-screen">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Lista de Bienes / Servicios</h2>
+      <Grid container justifyContent={'space-between'} sx={{mb:2}}>
+        <Typography component={'h2'} variant='h5' fontWeight={'bold'} fontSize={`clamp(${text_min}, ${text_med}, ${text_max})`}>Lista de Bienes / Servicios</Typography>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
@@ -140,10 +159,10 @@ function TablaProductos() {
             }}
             onClick={handleAddRow}
           >
-            Añadir Por Producto
+            Añadir De Catálogo
           </Button>
         </Stack>
-      </div>
+      </Grid>
 
       <div className="overflow-x-auto">
         <div className="relative pb-12" style={{
@@ -153,6 +172,7 @@ function TablaProductos() {
             borderColor:'var(--color-primary)',
             overflow:'hidden',
             }}>
+        {!esMovil && (
         <Table className="min-w-full" sx={{
             backgroundColor:'var(--color-surface)',
             color:'(var--color-on-surface)',
@@ -294,26 +314,31 @@ function TablaProductos() {
       </TableRow>
           </TableBody>
         </Table>
-
-              
+        )}
+        
         </div>
       </div>
       {/* Botón flotante sobre el borde inferior de la tabla */}
         <Box>
-            <Fab
-              onClick={handleAddRow}
-              className="absolute left-1/2 -bottom-[21px] transform -translate-x-1/2 z-20 shadow-md"
-              sx={{
-                backgroundColor: 'var(--color-primary)',
-                color: 'var(--color-on-primary)',
-                '&:hover': {
-                    backgroundColor: 'var(--color-secondary)',
-                  color: 'var(--color-on-secondary)', // blanco o el que hayas definido
-                },
-              }}
-            >
-              <AddIcon />
-            </Fab>
+            <Tooltip title='Añadir Producto Manualmente' placement='top' >
+              <Fab
+                onClick={handleAddRow}
+                className="absolute left-1/2 -bottom-[21px] transform -translate-x-1/2 z-20 shadow-md"
+                sx={{
+                  position:'fixed',
+                  left:150,
+                  bottom:20,
+                  backgroundColor: 'var(--color-primary)',
+                  color: 'var(--color-on-primary)',
+                  '&:hover': {
+                      backgroundColor: 'var(--color-secondary)',
+                    color: 'var(--color-on-secondary)', // blanco o el que hayas definido
+                  },
+                }}
+              >
+                <AddIcon />
+              </Fab>
+            </Tooltip>
         </Box>
     </div>
   );
