@@ -4,6 +4,7 @@ import {
   Tooltip
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon, CleaningServices as CleanIcon } from '@mui/icons-material';
+import ListMode from './ListMode';
 
 function TablaProductos() {
 
@@ -123,12 +124,13 @@ const text_max = '1.4375rem'; // 23px
 
   return (
     <div className="p-4 bg-background text-on-background min-h-screen">
-      <Grid container justifyContent={'space-between'} sx={{mb:2}}>
-        <Typography component={'h2'} variant='h5' fontWeight={'bold'} fontSize={`clamp(${text_min}, ${text_med}, ${text_max})`}>Lista de Bienes / Servicios</Typography>
+      <Grid container justifyContent={{xs:'center', sm:'space-between'}} sx={{mb:2}}>
+        <Typography component={'h2'} variant='h5' fontWeight={'bold'} fontSize={`clamp(${text_min}, ${text_med}, ${text_max})`} >Lista de Bienes / Servicios</Typography>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
-          alignItems="flex-start"
+          alignItems="center"
+          justifyContent={'center'}
         >
           <Button
             variant="contained"
@@ -315,6 +317,9 @@ const text_max = '1.4375rem'; // 23px
           </TableBody>
         </Table>
         )}
+        { esMovil &&(
+          <ListMode productos={productos} handleDeleteRow={handleDeleteRow}/>
+        )}
         
         </div>
       </div>
@@ -323,10 +328,11 @@ const text_max = '1.4375rem'; // 23px
             <Tooltip title='Añadir Producto Manualmente' placement='top' >
               <Fab
                 onClick={handleAddRow}
-                className="absolute left-1/2 -bottom-[21px] transform -translate-x-1/2 z-20 shadow-md"
+                className="shadow-md"
                 sx={{
                   position:'fixed',
-                  left:150,
+                  left:!esMovil?150:'50%',
+                  transform: "translateX(-50%)",
                   bottom:20,
                   backgroundColor: 'var(--color-primary)',
                   color: 'var(--color-on-primary)',

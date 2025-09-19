@@ -1,7 +1,7 @@
 import { Grid, IconButton, Typography } from '@mui/material'
 import { Delete as DeleteIcon} from '@mui/icons-material';
 
-function ListMode({productos}) {
+function ListMode({ productos, handleDeleteRow }) {
     
     return (
         <Grid container direction="column" gap={2} sx={{width:'100%'}}>
